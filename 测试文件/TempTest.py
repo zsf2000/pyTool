@@ -25,7 +25,7 @@ def OutlierDataFilter(npTemp,npRes):
     # 打印离群数据点
     print("离群数据点：")
     print(npRes)
-
+    return npRes
 
 #************************************************************************************
 #函数名称：delete
@@ -56,7 +56,15 @@ selected_colunm = selected_colunm.to_numpy()
 
 # 打印NumPy数组
 print(selected_colunm)
-npRes=np.empty()
-OutlierDataFilter(selected_colunm,npRes)
+npRes=np.empty((1,10))
+npRes=OutlierDataFilter(selected_colunm,npRes)
 # 定义要删除的多个条件
-condition1 = (df['Column1'] == 'Value1')  # 例如，删除'Column1'列中值等于'Value1'的行
+df.to_excel("C:\\Users\\zsf\\Desktop\\pythonTool\\类线性关系拟合\\updated_excel_file.xlsx", index=False)
+dfTemp = pd.read_excel("C:\\Users\\zsf\\Desktop\\pythonTool\\类线性关系拟合\\updated_excel_file.xlsx")
+for x in  npRes.T:
+    print(x)
+    dfTemp = pd.read_excel("C:\\Users\\zsf\\Desktop\\pythonTool\\类线性关系拟合\\updated_excel_file.xlsx")
+    condition1 = (dfTemp['AVGTFELASER'] == x)  # 例如，删除'Column1'列中值等于'Value1'的行
+    dfTemp = dfTemp[~(condition1)]
+    #将更新后的数据写回到新的Excel文件
+    dfTemp.to_excel("C:\\Users\\zsf\\Desktop\\pythonTool\\类线性关系拟合\\updated_excel_file.xlsx", index=False)
