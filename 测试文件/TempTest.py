@@ -7,7 +7,7 @@ import openpyxl
 #************************************************************************************
 def OutlierDataFilter(npTemp,npRes):
     # 生成示例数据，这里用随机数据代替
-    data = np.random.randn(100)
+    #data = np.random.randn(100)
 
     # 计算均值和标准差
     mean = np.mean(npTemp)
@@ -46,11 +46,11 @@ def delte():
 
 # 指定Excel文件路径
 excel_file = "C:\\Users\\zsf\\Desktop\\pythonTool\\类线性关系拟合\\MaSteel.xlsx"  # 替换为你的Excel文件路径
-
+result_excel_file='C:\\Users\\zsf\\Desktop\\pythonTool\\类线性关系拟合\\updated_excel_file.xlsx'
 # 使用pandas读取Excel数据
-df = pd.read_excel(excel_file)
+df = pd.read_excel(result_excel_file)
 #指定某一列
-selected_colunm=df['AVGTFELASER']
+selected_colunm=df['差值']
 # 将数据转换为NumPy数组
 selected_colunm = selected_colunm.to_numpy()
 
