@@ -1,11 +1,10 @@
-#-*- encoding:utf-8 -*-
 import sys   #reload()之前必须要引入模块
 import ibm_db
 import logger
 #import GlobalDefine
 import random
 import datetime
-
+import pandas as pd
 #log类定义
 OutLogFileName='C:\\Users\\zsf\\Desktop\\pythonTool\\DB2数据库连接\\log.log'
 log1=logger.Log(OutLogFileName,'debug')
@@ -54,10 +53,13 @@ class PyDB2(object):
         print(sql)
         stmt = ibm_db.exec_immediate(self.conn, sql)   #执行SQL
         result = ibm_db.fetch_assoc(stmt)    #一行一行的执行
+        dictReturn = { }
         while (result):
             print(result["VALUE"])
+            print(result["COMPONENT"])
+            dictReturn[result["COMPONENT"]]=result["VALUE"]
             result = ibm_db.fetch_assoc(stmt)
-        return result
+        return dictReturn
        except:
             log2.debug("sqlerro:",ibm_db.stmt_error)
             log2.debug("sqlerro:",ibm_db.stmt_errormsg)
@@ -69,9 +71,42 @@ class PyDB2(object):
         ibm_db.close(self.conn)
         log2.debug("disconnect db2 connection")
         print("disconnect db2 connection")
+def Write(data):
+        # 创建一个示例的DataFrame（数据表）
+
+
+    df = pd.DataFrame(data)
+
+    # 指定要写入的Excel文件路径
+    excel_file = "output_data.xlsx"  # 替换为你要写入的Excel文件路径
+    # 创建ExcelWriter对象以允许格式化
+    excel_writer = pd.ExcelWriter(excel_file, engine='xlsxwriter')
+    # 将DataFrame写入Excel文件
+    df.to_excel(excel_writer, index=False, sheet_name='Sheet1')
+    # 获取ExcelWriter的工作簿和工作表对象
+    workbook = excel_writer.book
+    worksheet = excel_writer.sheets['Sheet1']
+    # 设置数据格式
+    double_format = workbook.add_format({'num_format': '0.000'})
+    worksheet.set_column('B:B', None, double_format)
+    # 保存Excel文件
+    excel_writer.save()
+    print(f"数据已成功写入Excel文件 '{excel_file}'。")
+
+
 def main():
     conn_str="DATABASE=BF;HOSTNAME=10.25.104.34;PORT=50000;PROTOCOL=TCPIP;UID=bf;PWD=bf;"
     bfDB=PyDB2(conn_str)
     bfDB.connect()
-    return bfDB.test(2)
-
+    dictReturn=bfDB.test(2)
+    dataW={}
+    list_key=[]
+    list_value=[]
+    for key, value in dictReturn.items():
+        print(key, value)
+        list_key.append(key)
+        list_value.append(value)
+    dataW["COM"]=list_key
+    dataW["Value"]=list_value
+    Write(dataW)
+main()
